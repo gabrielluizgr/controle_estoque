@@ -103,9 +103,9 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
     entry_marca = tk.Entry(janela_atualizar)
     entry_marca.pack()
 
-    tk.Label(janela_atualizar, text="Novo Sabor:").pack()
-    entry_sabor = tk.Entry(janela_atualizar)
-    entry_sabor.pack()
+    tk.Label(janela_atualizar, text="Nova Descrição:").pack()
+    entry_descricao = tk.Entry(janela_atualizar)
+    entry_descricao.pack()
 
     tk.Label(janela_atualizar, text="Nova Quantidade:").pack()
     entry_quantidade = tk.Entry(janela_atualizar)
@@ -126,11 +126,11 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
                 return
             
             # Desempacotando dados atuais
-            _, nome_atual, marca_atual, sabor_atual, quantidade_atual, preco_atual = produto_atual
+            _, nome_atual, marca_atual, descricao_atual, quantidade_atual, preco_atual = produto_atual
             # Lê os novos dados ou mantém os antigos
             nome = entry_nome.get() or nome_atual
             marca = entry_marca.get() or marca_atual
-            sabor = entry_sabor.get() or sabor_atual
+            descricao = entry_descricao.get() or descricao_atual
 
             if entry_quantidade.get(): # Verifica se o campo quantidade foi preenchido, se foi, o converte para int
                 quantidade = int(entry_quantidade.get())
@@ -146,7 +146,7 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
             else:
                 preco = preco_atual # Se não foi preenchido, volta a ser o preço atual
             
-            linhas_afetadas = atualizar_produto_id(id_produto, nome, marca, sabor, quantidade, preco)
+            linhas_afetadas = atualizar_produto_id(id_produto, nome, marca, descricao, quantidade, preco)
             if linhas_afetadas == 0:
                 messagebox.showwarning("Aviso", "Produto não encontrado.")
             else:

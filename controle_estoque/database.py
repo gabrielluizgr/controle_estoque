@@ -1,7 +1,7 @@
 # Traz para o programa a biblioteca padrão do Python que lida com banco de dados SQLite
 import sqlite3
 
-def atualizar_produto_id(id_produto, nome, marca, sabor, quantidade, preco): # Criação de uma função para atualizar um produto no banco de dados
+def atualizar_produto_id(id_produto, nome, marca, descricao, quantidade, preco): # Criação de uma função para atualizar um produto no banco de dados
     # Estabelece conexão com o banco de dados SQLite chamado "estoque.db"
     try:
         conexao = sqlite3.connect("estoque.db")
@@ -10,9 +10,9 @@ def atualizar_produto_id(id_produto, nome, marca, sabor, quantidade, preco): # C
         # Executa o comando SQL para atualizar o produto para os novos valores, bom base no ID
         cursor.execute("""
             UPDATE produtos
-            SET nome = ?, marca = ?, sabor = ?, quantidade = ?, preco = ?
+            SET nome = ?, marca = ?, descricao = ?, quantidade = ?, preco = ?
             WHERE id = ?
-        """, (nome, marca, sabor, quantidade, preco, id_produto))
+        """, (nome, marca, descricao, quantidade, preco, id_produto))
 
         # Salva (confirma) as alterações feitas no banco de dados
         conexao.commit()
@@ -112,7 +112,7 @@ def lista_dos_produtos(): # Criação de uma função para listar todos os produ
         # Se ocorrer um erro, retorna False e a mensagem de erro como uma string
         return False, str(e)
 
-def cadastro_dos_produtos(nome, marca, sabor, quantidade, preco): # Criação de uma função para cadastrar um produto no banco de dados
+def cadastro_dos_produtos(nome, marca, descricao, quantidade, preco): # Criação de uma função para cadastrar um produto no banco de dados
 
     # Estabelece conexão com o banco de dados SQLite chamado "estoque.db"
     try:
@@ -122,9 +122,9 @@ def cadastro_dos_produtos(nome, marca, sabor, quantidade, preco): # Criação de
         # Executa o comando SQL para inserir um novo produto na tabela "produtos"
         # Os valores são passados como parâmetros "?" para evitar SQL Injection
         cursor.execute("""
-                       INSERT INTO produtos (nome, marca, sabor, quantidade, preco)
+                       INSERT INTO produtos (nome, marca, descricao, quantidade, preco)
                        VALUES(?, ?, ?, ?, ?)
-                       """, (nome, marca, sabor, quantidade, preco))
+                       """, (nome, marca, descricao, quantidade, preco))
         
         # Salva (confirma) e fecha a conexão com o banco de dados
         conexao.commit()

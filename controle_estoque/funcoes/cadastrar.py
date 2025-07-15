@@ -63,10 +63,10 @@ def cadastrar_produtos_gui(janela_principal): # Criação de uma nova função q
     entry_marca = tk.Entry(janela_cadastro)
     entry_marca.pack(pady=5)
 
-    # Sabor
-    tk.Label(janela_cadastro, text="Sabor (Opcional):").pack() # Padrão repetido
-    entry_sabor = tk.Entry(janela_cadastro)
-    entry_sabor.pack(pady=5)
+    # Descrição
+    tk.Label(janela_cadastro, text="Descrição (Opcional) (Sabor, Tamanho...):").pack() # Padrão repetido
+    entry_descricao = tk.Entry(janela_cadastro)
+    entry_descricao.pack(pady=5)
 
     # Quantidade
     tk.Label(janela_cadastro, text="Quantidade (Obrigatório):").pack() # Padrão repetido
@@ -85,7 +85,7 @@ def cadastrar_produtos_gui(janela_principal): # Criação de uma nova função q
             return
 
         marca = entry_marca.get().strip() or "Sem marca" # Pega o valor digitado no campo de nome, remove os espaços indesejados e caso não for informado, vira "Sem marca"
-        sabor = entry_sabor.get().strip() or "Sem sabor" # Pega o valor digitado no campo sabor, remove os espaços indesejados e caso não for informado, vira "Sem sabor"
+        descricao = entry_descricao.get().strip() or "Sem descrição" # Pega o valor digitado no campo sabor, remove os espaços indesejados e caso não for informado, vira "Sem sabor"
 
         try:
             quantidade = int(entry_quantidade.get()) # Pega o valor digitado no campo de quantidade, e o tenta converter para número int 
@@ -105,13 +105,13 @@ def cadastrar_produtos_gui(janela_principal): # Criação de uma nova função q
             messagebox.showerror("Erro", "Preço deve ser um número decimal.")
             return
             
-        sucesso, mensagem = cadastro_dos_produtos(nome, marca, sabor, quantidade, preco)
+        sucesso, mensagem = cadastro_dos_produtos(nome, marca, descricao, quantidade, preco)
         if sucesso:
             messagebox.showinfo("Sucesso", mensagem)
             # Limpa os campos
             entry_nome.delete(0, tk.END)
             entry_marca.delete(0, tk.END)
-            entry_sabor.delete(0, tk.END)
+            entry_descricao.delete(0, tk.END)
             entry_quantidade.delete(0, tk.END)
             entry_preco.delete(0, tk.END)
             entry_nome.focus()
