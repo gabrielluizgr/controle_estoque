@@ -33,7 +33,7 @@ def listar_produtos(): # Criação de uma função para listar os produtos do ba
 def listar_produtos_gui(janela_principal): # Criação de uma nova função que será chamada quando o usuário clicar no botão Listar Produtos
     janela_listagem = tk.Toplevel() # Criação de uma nova janela filha (secundária). Usamos Toplevel() ao invés de Tk(), porque essa janela depende da principal (não é uma aplicação, é só uma nova tela)
     janela_listagem.title("Lista de Produtos") # Define o título da janela
-    janela_listagem.geometry("600x500") # Define o tamanho da janela
+    janela_listagem.geometry("700x500") # Define o tamanho da janela
 
     frame = tk.Frame(janela_listagem) # Cria um frame, que é uma caixa contêiner dentro da janela. Serve como um espaço para agrupar elementos (como a lista e a barra de rolagem)
     frame.pack(fill=tk.BOTH, expand=True) # Coloca o frame na tela. "fill=tk.BOTH" sinaliza que ele vai ocupar o espaço tanto horizontal, quanto vertical. "expand=True" permite que o frame cresça junto com a janela, se ela for redimensionada
@@ -50,9 +50,11 @@ def listar_produtos_gui(janela_principal): # Criação de uma nova função que 
     if sucesso:
         produtos = resultado
         if produtos:
-            for id, nome, marca, sabor, quantidade, preco in produtos:
+            for id, nome, marca, descricao, quantidade, preco in produtos:
+                marca = marca.strip() if marca else "Sem marca"
+                descricao = descricao.strip() if descricao else "Sem descrição"
                 preco_formatado = f"{preco:.2f}".replace('.', ',')
-                texto = f"ID: {id} | Nome: {nome} | Marca: {marca or 'Sem marca'} | Sabor: {sabor} | Quantidade: {quantidade} | Preço: R$ {preco_formatado}"
+                texto = f"ID: {id} | Nome: {nome} | Marca: {marca or 'Sem marca'} | Descrição: {descricao} | Quantidade: {quantidade} | Preço: R$ {preco_formatado}"
                 lista.insert(tk.END, texto)
         else:
             lista.insert(tk.END, "Nenhum produto cadastrado.")

@@ -64,7 +64,7 @@ def cadastrar_produtos_gui(janela_principal): # Criação de uma nova função q
     entry_marca.pack(pady=5)
 
     # Descrição
-    tk.Label(janela_cadastro, text="Descrição (Opcional) (Sabor, Tamanho...):").pack() # Padrão repetido
+    tk.Label(janela_cadastro, text="Descrição (Opcional):").pack() # Padrão repetido
     entry_descricao = tk.Entry(janela_cadastro)
     entry_descricao.pack(pady=5)
 

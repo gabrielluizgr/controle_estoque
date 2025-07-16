@@ -128,24 +128,41 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
             # Desempacotando dados atuais
             _, nome_atual, marca_atual, descricao_atual, quantidade_atual, preco_atual = produto_atual
             # Lê os novos dados ou mantém os antigos
-            nome = entry_nome.get() or nome_atual
-            marca = entry_marca.get() or marca_atual
-            descricao = entry_descricao.get() or descricao_atual
+            nome = entry_nome.get().strip() or nome_atual
+            marca = entry_marca.get().strip() or marca_atual
+            descricao = entry_descricao.get().strip() or descricao_atual
 
-            if entry_quantidade.get(): # Verifica se o campo quantidade foi preenchido, se foi, o converte para int
-                quantidade = int(entry_quantidade.get())
+            if not nome: # Se o nome for vazio, mostra o aviso e encerra a função
+                messagebox.showwarning("Aviso", "O nome do produto é obrigatório.")
+                return
+            
+            quantidade_str = quantidade.get().strip()
+
+            if quantidade_str: # Verifica se o campo quantidade foi preenchido, se foi, o converte para int
+                try:
+                    quantidade = int(quantidade_str)
+                    if quantidade < 0:
+                        messagebox.showerror("Erro", "Quantidade não pode ser negativa.")
+                        return
+                except ValueError:
+                    messagebox.showerror("Erro", "Quantidade deve ser número inteiro.")
             else:
-                quantidade = quantidade_atual # Se não foi preenchido, volta a ser a quantidade atual
-            preco_str = entry_preco.get().replace(',', '.')
+                quantidade = quantidade_atual
+
+            preco_str = entry_preco.get().strip().replace(',', '.')
             if preco_str: # Verifica se o campo preço foi preenchido, se foi, o converte para float
                 try:
                     preco = float(preco_str)
+                    if preco < 0:
+                        messagebox.showerror("Erro", "Preço não pode ser negativo.")
+                        return
                 except ValueError:
                     messagebox.showerror("Erro", "Digite um preço válido. Use apenas números")
                     return
             else:
                 preco = preco_atual # Se não foi preenchido, volta a ser o preço atual
-            
+                
+            # Atualização do banco
             linhas_afetadas = atualizar_produto_id(id_produto, nome, marca, descricao, quantidade, preco)
             if linhas_afetadas == 0:
                 messagebox.showwarning("Aviso", "Produto não encontrado.")
@@ -154,7 +171,7 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
                 janela_atualizar.destroy()
 
         except ValueError: # Captura de erros de conversão ou no banco de dados
-            messagebox.showerror("Erro", "Preencha todos os campos corretamente.")
+            messagebox.showerror("Erro", "ID Inválido: Use números inteiros.")
         except sqlite3.Error as e:
             messagebox.showerror("Erro no banco de dados", str(e))
 

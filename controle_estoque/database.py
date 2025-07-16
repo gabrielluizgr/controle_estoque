@@ -119,6 +119,14 @@ def cadastro_dos_produtos(nome, marca, descricao, quantidade, preco): # Criaçã
         conexao = sqlite3.connect("estoque.db")
         cursor = conexao.cursor()
 
+        cursor.execute(""" 
+                       SELECT * FROM produtos WHERE nome = ? AND marca = ? AND descricao = ?
+                       """, (nome, marca, descricao))
+        produto_existente = cursor.fetchone() # Verifica se já existe um produto com o mesmo nome, marca e descrição
+        if produto_existente:
+            conexao.close()
+            return False, "Produto já cadastrado com esse nome, marca e descrição."
+
         # Executa o comando SQL para inserir um novo produto na tabela "produtos"
         # Os valores são passados como parâmetros "?" para evitar SQL Injection
         cursor.execute("""
@@ -152,7 +160,7 @@ def criar_tabela():
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nome TEXT NOT NULL,
                         marca TEXT,
-                        sabor TEXT,
+                        descricao TEXT,
                         quantidade INTEGER,
                         preco REAL
                     )
