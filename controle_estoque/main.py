@@ -2,6 +2,7 @@
 import tkinter as tk
 # Do tkinter, importe a messagebox, que é basicamente uma função de popup
 from tkinter import messagebox
+from tkinter import PhotoImage
 # Importando a criação da tabela do módulo database
 from database import criar_tabela 
 # Importando para o programa a biblioteca padrão do Python que lida com banco de dados SQLite
@@ -15,25 +16,62 @@ from funcoes.remover import remover_produtos_gui
 def abrir_janela(): # Função para criação da janela principal do sistema
     janela = tk.Tk() # Cria a janela principal da aplicação
     janela.title("Controle de Estoque") # Coloca um título na janela principal
-    janela.geometry("400x300") # Define o tamanho da janela, no caso 400x300
+    janela.geometry("400x400") # Define o tamanho da janela, no caso 400x300
+
+    icone_cadastrar = tk.PhotoImage(file="controle_estoque/icons/icone_add.png")
+    icone_remover = tk.PhotoImage(file="controle_estoque/icons/icone_remove.png")
+    icone_atualizar = tk.PhotoImage(file="controle_estoque/icons/icone_att.png")
+    icone_listar = tk.PhotoImage(file="controle_estoque/icons/icone_list.png")
+    icone_sair = tk.PhotoImage(file="controle_estoque/icons/icone_quit.png")
 
     # Título da janela principal
-    titulo = tk.Label(janela, text="Controle de Estoque", font=("Arial", 16, "bold")) # Criação de uma etiqueta de texto
-    titulo.pack(pady=10) # Mostra o item na tela (pack) e dá um espaço vertical de 10px
+    titulo = tk.Label(janela, text="Controle de Estoque", font=("Segoe UI", 16, "bold"), bg="#f0f0f0") # Criação de uma etiqueta de texto
+    titulo.pack(pady=(30, 20)) # Mostra o item na tela (pack) e dá um espaço vertical de 10px
 
-    # Botões do menu
-    # Cria um botão com o texto informado, width=30 é sua largura e o command é o que vai acontecer depois. A mesma coisa vale para todos os outros botões
-    btn_cadastrar = tk.Button(janela, text="Cadastrar Produto", width=30, command=lambda: cadastrar_produtos_gui(janela)) 
-    btn_listar = tk.Button(janela, text="Listar Produtos", width=30, command=lambda: listar_produtos_gui(janela))
-    btn_atualizar = tk.Button(janela,text="Atualizar Produto", width=30, command=lambda: atualizar_produtos_gui(janela))
-    btn_remover = tk.Button(janela, text="Remover Produto", width=30, command=lambda: remover_produtos_gui(janela))
-    btn_sair = tk.Button(janela, text="Sair", width=30, command=janela.quit)
-    # Colocando os botões para aparecerem na tela (pack), com um espaçamento vertical de 5px
-    btn_cadastrar.pack(pady=5) 
-    btn_listar.pack(pady=5)
-    btn_atualizar.pack(pady=5)
-    btn_remover.pack(pady=5)
-    btn_sair.pack(pady=20)
+    frame_botoes = tk.Frame(janela, bg="#f0f0f0")
+    frame_botoes.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
+
+    def criar_botao(texto, comando, icone = None, cor="#191970"):
+        btn = tk.Button(
+            frame_botoes,
+            text=texto,
+            command=comando,
+            bg=cor,
+            fg="white",
+            font=("Segoe UI", 10, "bold"),
+            height=20,
+            width=300,
+            compound="left"
+        )
+        if icone:
+            btn.config(image=icone)
+            btn.image = icone
+        return btn
+    
+    botoes = [
+        ("Cadastrar Produto", lambda: cadastrar_produtos_gui(janela), icone_cadastrar),
+        ("Listar Produtos", lambda: listar_produtos_gui(janela), icone_listar),
+        ("Atualizar Produto", lambda: atualizar_produtos_gui(janela), icone_atualizar),
+        ("Remover Produto", lambda: remover_produtos_gui(janela), icone_remover),
+
+    ]
+    for texto, comando, icone in botoes:
+        criar_botao(texto, comando, icone).pack(pady=10)
+
+    btn_sair = tk.Button(
+        frame_botoes,
+        text="Sair",
+        command=janela.quit,
+        bg="#4F4F4F",
+        fg="white",
+        font=("Segoe UI", 10, "bold"),
+        height=20,
+        width=300,
+        compound="left",
+        image=icone_sair
+    )
+    
+    btn_sair.pack(pady=10)
 
     janela.mainloop() # Esse comando mantém a janela aberta, esperando que o usuário clique em algum botão. Sem isso, a janela abriria e fecharia em 0.00001 segundos
 

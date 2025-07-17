@@ -33,13 +33,16 @@ def listar_produtos(): # Criação de uma função para listar os produtos do ba
 def listar_produtos_gui(janela_principal): # Criação de uma nova função que será chamada quando o usuário clicar no botão Listar Produtos
     janela_listagem = tk.Toplevel() # Criação de uma nova janela filha (secundária). Usamos Toplevel() ao invés de Tk(), porque essa janela depende da principal (não é uma aplicação, é só uma nova tela)
     janela_listagem.title("Lista de Produtos") # Define o título da janela
-    janela_listagem.geometry("700x500") # Define o tamanho da janela
+    janela_listagem.geometry("920x500") # Define o tamanho da janela
+    janela_listagem.configure(bg="#f0f0f0")
 
-    frame = tk.Frame(janela_listagem) # Cria um frame, que é uma caixa contêiner dentro da janela. Serve como um espaço para agrupar elementos (como a lista e a barra de rolagem)
-    frame.pack(fill=tk.BOTH, expand=True) # Coloca o frame na tela. "fill=tk.BOTH" sinaliza que ele vai ocupar o espaço tanto horizontal, quanto vertical. "expand=True" permite que o frame cresça junto com a janela, se ela for redimensionada
+    tk.Label(janela_listagem, text="Produtos Cadastrados", font=("Arial", 16), bg="#f0f0f0").pack(pady=(20, 10))
+
+    frame = tk.Frame(janela_listagem, bg="#f0f0f0") # Cria um frame, que é uma caixa contêiner dentro da janela. Serve como um espaço para agrupar elementos (como a lista e a barra de rolagem)
+    frame.pack(padx=20, fill=tk.BOTH, expand=True) # Coloca o frame na tela. "fill=tk.BOTH" sinaliza que ele vai ocupar o espaço tanto horizontal, quanto vertical. "expand=True" permite que o frame cresça junto com a janela, se ela for redimensionada
     scrollbar = tk.Scrollbar(frame) # Cria uma barra de rolagem vertical dentro do frame. Isso é importante caso tenhamos muitos produtos para exibir.
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y) # Coloca a barra de rolagem na tela. "side=tk.RIGHT" sinaliza que ela aparecerá do lado direito da janela. "fill=tk.Y" faz com que ela se estique no eixo Y, ou seja, verticalmente
-    lista = tk.Listbox(frame, yscrollcommand=scrollbar.set, width=80) # Cria um componente Listbox, que é como uma caixa de listagem de itens. "yscrollcomand=scrollbar.set" conecta o scroll com a lista (para ele funcionar). "width=80" define a largura da lista (em caracteres, não pixels)
+    lista = tk.Listbox(frame, yscrollcommand=scrollbar.set, width=100, height=20, font=("Consolas", 10), bg="white", borderwidth=2, relief="groove") # Cria um componente Listbox, que é como uma caixa de listagem de itens. "yscrollcomand=scrollbar.set" conecta o scroll com a lista (para ele funcionar). "width=80" define a largura da lista (em caracteres, não pixels)
     lista.pack(side=tk.LEFT, fill=tk.BOTH, expand=True) # Coloca a Listbox no lado esquerdo do frame e faz com que ele preencha todo o espaço disponível
     lista.config(selectmode=tk.NONE)
     lista.bind("<Button-1>", lambda e: "break")
@@ -64,5 +67,5 @@ def listar_produtos_gui(janela_principal): # Criação de uma nova função que 
     # Botão pra fechar janela
     frame_botoes = tk.Frame(janela_listagem)
     frame_botoes.pack(pady=10)
-    btn_fechar = tk.Button(frame_botoes, text="Fechar", command=janela_listagem.destroy, bg="red", fg="white")
+    btn_fechar = tk.Button(frame_botoes, text="Fechar", command=janela_listagem.destroy, bg="red", fg="white", font=("Segoe UI", 10, "bold"), width=10)
     btn_fechar.pack()

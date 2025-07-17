@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 import sqlite3
 from database import cadastro_dos_produtos
 
@@ -51,32 +52,35 @@ def cadastrar_produtos_gui(janela_principal): # Criação de uma nova função q
 
     janela_cadastro = tk.Toplevel() # Cria uma janela filha dentro do programa principal, usamos toplevel() e não tk() porque essa janela é dependente da principal
     janela_cadastro.title("Cadastrar Produto") # Define o título que aparece na barra superior da janela filha
-    janela_cadastro.geometry("400x400") # Define o tamanho da janela filha 400x400
+    janela_cadastro.geometry("420x420") # Define o tamanho da janela filha
+    janela_cadastro.configure(bg="#f0f0f0") # Cor do fundo da janela filha
 
-    # Nome
-    tk.Label(janela_cadastro, text="Nome (Obrigatório):").pack() # Cria um rótulo(texto) com "Nome:" dentro da janela, e o exibe (pack() significa "coloca na tela")
-    entry_nome = tk.Entry(janela_cadastro) # Cria um campo de entrada de texto para o nome do produto, e o exibe. A variável entry_nome guarda esse campo, pra depois pegar o valor
-    entry_nome.pack(pady=5)
+    janela_cadastro.columnconfigure(0, weight=1) # Configura a coluna 0 para expandir com o tamanho da janela
 
-    # Marca
-    tk.Label(janela_cadastro, text="Marca (Opcional):").pack() # Padrão repetido
-    entry_marca = tk.Entry(janela_cadastro)
-    entry_marca.pack(pady=5)
 
-    # Descrição
-    tk.Label(janela_cadastro, text="Descrição (Opcional):").pack() # Padrão repetido
-    entry_descricao = tk.Entry(janela_cadastro)
-    entry_descricao.pack(pady=5)
+    # Título visual da tela
+    titulo = tk.Label(janela_cadastro, text="Cadastro de Produto", font=("Segoe UI", 14, "bold"), bg="#f0f0f0")
+    titulo.pack(pady=(15, 20))
 
-    # Quantidade
-    tk.Label(janela_cadastro, text="Quantidade (Obrigatório):").pack() # Padrão repetido
-    entry_quantidade = tk.Entry(janela_cadastro)
-    entry_quantidade.pack(pady=5)
+    def criar_campo(nome, obrigatorio=False):
+        texto = nome + (" *" if obrigatorio else "")
 
-    # Preço
-    tk.Label(janela_cadastro, text="Preço (Obrigatório):").pack() # Padrão repetido
-    entry_preco = tk.Entry(janela_cadastro)
-    entry_preco.pack(pady=5)
+        frame = tk.Frame(janela_cadastro, bg="#f0f0f0")
+        frame.pack(pady=5)
+
+        label = tk.Label(frame, text=texto, bg="#f0f0f0", fg="#000000", anchor="w", font=("Segoe UI", 10, "bold"))
+        label.pack(anchor="w")
+
+        entrada = ttk.Entry(frame, width=35)
+        entrada.pack()
+        return entrada
+    
+    # Campos
+    entry_nome = criar_campo("Nome", obrigatorio=True)
+    entry_marca = criar_campo("Marca")
+    entry_descricao = criar_campo("Descrição")
+    entry_quantidade = criar_campo("Quantidade", obrigatorio=True)
+    entry_preco = criar_campo("Preço", obrigatorio=True)
 
     def salvar(): # Criação da função interna que salva os dados no banco
         nome = entry_nome.get().strip() # Pega o valor digitado no campo de nome 
@@ -118,10 +122,14 @@ def cadastrar_produtos_gui(janela_principal): # Criação de uma nova função q
         else:
             messagebox.showerror("Erro no banco de dados", mensagem)
 
-    frame_botoes = tk.Frame(janela_cadastro)
-    frame_botoes.pack(pady=15)
+    # Botões
+    frame_botoes = tk.Frame(janela_cadastro, bg="#f0f0f0")
+    frame_botoes.pack(pady=25)
 
-    tk.Button(frame_botoes, text="Salvar", command=salvar, bg="green", fg="white").grid(row=0, column=0, padx=10)
-    tk.Button(frame_botoes, text="Cancelar", command=janela_cadastro.destroy, bg="red", fg="white").grid(row=0, column=1, padx=10)
+    btn_salvar = tk.Button(frame_botoes, text="Salvar", command=salvar, bg="green", fg="white", width=12, font=("Segoe UI", 10, "bold"))
+    btn_salvar.grid(row=0, column=0, padx=10)
+
+    btn_cancelar = tk.Button(frame_botoes, text="Cancelar", command=janela_cadastro.destroy, bg="red", fg="white", width=12, font=("Segoe UI", 10, "bold"))
+    btn_cancelar.grid(row=0, column=1, padx=10)
 
     entry_nome.focus()

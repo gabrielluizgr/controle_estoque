@@ -87,33 +87,30 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
     # Criação da nova janela filha
     janela_atualizar = tk.Toplevel()
     janela_atualizar.title("Atualizar Produto")
-    janela_atualizar.geometry("300x400")
+    janela_atualizar.geometry("400x500")
+    janela_atualizar.configure(bg="#f0f0f0")
 
+    # Título
+    tk.Label(janela_atualizar, text="Atualizar Produto", font=("Segoe UI", 16, "bold"), bg="#f0f0f0").pack(pady=(20, 10))
+
+    # Frame central dos campos
+    frame_campos = tk.Frame(janela_atualizar, bg="#f0f0f0")
+    frame_campos.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
+
+    def campo(label_text):
+        tk.Label(frame_campos, text=label_text, anchor="w", bg="#f0f0f0", font=("Segoe UI", 10, "bold")).pack(fill="x")
+        entry = tk.Entry(frame_campos, font=("Segoe UI", 10))
+        entry.pack(pady=5, fill="x")
+        return entry
+    
     # Campo para inserir o ID do produto
-    tk.Label(janela_atualizar, text="ID do Produto:").pack()
-    entry_id = tk.Entry(janela_atualizar)
-    entry_id.pack()
+    entry_id = campo("ID do Produto *")
+    entry_nome = campo("Novo Nome")
+    entry_marca = campo("Nova Marca")
+    entry_descricao = campo("Nova Descrição")
+    entry_quantidade = campo("Nova Quantidade")
+    entry_preco = campo("Novo Preço")
 
-    # Campo para os novos dados
-    tk.Label(janela_atualizar, text="Novo Nome:").pack()
-    entry_nome = tk.Entry(janela_atualizar)
-    entry_nome.pack()
-
-    tk.Label(janela_atualizar, text="Nova Marca:").pack()
-    entry_marca = tk.Entry(janela_atualizar)
-    entry_marca.pack()
-
-    tk.Label(janela_atualizar, text="Nova Descrição:").pack()
-    entry_descricao = tk.Entry(janela_atualizar)
-    entry_descricao.pack()
-
-    tk.Label(janela_atualizar, text="Nova Quantidade:").pack()
-    entry_quantidade = tk.Entry(janela_atualizar)
-    entry_quantidade.pack()
-
-    tk.Label(janela_atualizar, text="Novo Preço:").pack()
-    entry_preco = tk.Entry(janela_atualizar)
-    entry_preco.pack()
 
     # Criação da função para atualizar o banco
     def atualizar():
@@ -136,7 +133,7 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
                 messagebox.showwarning("Aviso", "O nome do produto é obrigatório.")
                 return
             
-            quantidade_str = quantidade.get().strip()
+            quantidade_str = entry_quantidade.get().strip()
 
             if quantidade_str: # Verifica se o campo quantidade foi preenchido, se foi, o converte para int
                 try:
@@ -176,10 +173,10 @@ def atualizar_produtos_gui(janela_principal):# Criação de uma nova função qu
             messagebox.showerror("Erro no banco de dados", str(e))
 
     # Botões de atualizar e cancelar
-    frame_botoes = tk.Frame(janela_atualizar) # Cria um quadro ou contêiner dentro da janela janela_atualizar. Esse frame vai ser usado só para organizar os botões lado a lado
+    frame_botoes = tk.Frame(janela_atualizar, bg="#f0f0f0") # Cria um quadro ou contêiner dentro da janela janela_atualizar. Esse frame vai ser usado só para organizar os botões lado a lado
     frame_botoes.pack(pady=20) # Adiciona esse frame à janela e define um espaçamento vertical (padding) de 20px acima e abaixo
 
-    btn_atualizar = tk.Button(frame_botoes, text="Atualizar", command=atualizar, bg="green", fg="white") # tk.Button cria um botão, "frame_botoes" será um botão filho "text="Atualizar"" define o texto visível dentro do botão, "command=atualizar" define a função que será chamada ao clicar o botão -- no caso a função será a criada antes atualizar(), "bg=green" é o fundo verde, "fg=white" define a cor do texto como branca. 
+    btn_atualizar = tk.Button(frame_botoes, text="Atualizar", command=atualizar, bg="green", fg="white", font=("Segoe UI", 10, "bold"), width=12) # tk.Button cria um botão, "frame_botoes" será um botão filho "text="Atualizar"" define o texto visível dentro do botão, "command=atualizar" define a função que será chamada ao clicar o botão -- no caso a função será a criada antes atualizar(), "bg=green" é o fundo verde, "fg=white" define a cor do texto como branca. 
     btn_atualizar.grid(row=0, column=0, padx=10) # Usa o layout grid para posicionar o botão na linha 0, coluna 0, dentro do frame.padx=10 adiciona um espaçamento horizontal (padding) de 10px nas laterais.
-    btn_cancelar = tk.Button(frame_botoes, text="Cancelar", command=janela_atualizar.destroy, bg="red", fg="white")
+    btn_cancelar = tk.Button(frame_botoes, text="Cancelar", command=janela_atualizar.destroy, bg="red", fg="white", font=("Segoe UI", 10, "bold"), width=12)
     btn_cancelar.grid(row=0, column=1, padx=10)
