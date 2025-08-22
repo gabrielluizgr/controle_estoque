@@ -12,17 +12,26 @@ from funcoes.cadastrar import cadastrar_produtos_gui
 from funcoes.listar import listar_produtos_gui
 from funcoes.atualizar import atualizar_produtos_gui
 from funcoes.remover import remover_produtos_gui
+from PIL import Image, ImageTk
+
+
+def carregar_icone(caminho, tamanho=(24, 24)):
+    """Carrega e redimensiona o ícone."""
+    imagem = Image.open(caminho)
+    imagem = imagem.resize(tamanho, Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(imagem)
 
 def abrir_janela(): # Função para criação da janela principal do sistema
     janela = tk.Tk() # Cria a janela principal da aplicação
     janela.title("Controle de Estoque") # Coloca um título na janela principal
-    janela.geometry("400x400") # Define o tamanho da janela, no caso 400x300
+    janela.geometry("400x500") # Define o tamanho da janela, no caso 400x300
 
-    icone_cadastrar = tk.PhotoImage(file="controle_estoque/icons/icone_add.png")
-    icone_remover = tk.PhotoImage(file="controle_estoque/icons/icone_remove.png")
-    icone_atualizar = tk.PhotoImage(file="controle_estoque/icons/icone_att.png")
-    icone_listar = tk.PhotoImage(file="controle_estoque/icons/icone_list.png")
-    icone_sair = tk.PhotoImage(file="controle_estoque/icons/icone_quit.png")
+    # Carrega ícones com tamanho padronizado
+    icone_cadastrar = carregar_icone("controle_estoque/icons/icone_add.png")
+    icone_listar    = carregar_icone("controle_estoque/icons/icone_list.png")
+    icone_atualizar = carregar_icone("controle_estoque/icons/icone_att.png")
+    icone_remover   = carregar_icone("controle_estoque/icons/icone_remove.png")
+    icone_sair      = carregar_icone("controle_estoque/icons/icone_quit.png")
 
     # Título da janela principal
     titulo = tk.Label(janela, text="Controle de Estoque", font=("Segoe UI", 16, "bold"), bg="#f0f0f0") # Criação de uma etiqueta de texto
@@ -31,7 +40,7 @@ def abrir_janela(): # Função para criação da janela principal do sistema
     frame_botoes = tk.Frame(janela, bg="#f0f0f0")
     frame_botoes.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
 
-    def criar_botao(texto, comando, icone = None, cor="#191970"):
+    def criar_botao(texto, comando, icone=None, cor="#191970"):
         btn = tk.Button(
             frame_botoes,
             text=texto,
@@ -39,13 +48,15 @@ def abrir_janela(): # Função para criação da janela principal do sistema
             bg=cor,
             fg="white",
             font=("Segoe UI", 10, "bold"),
-            height=20,
-            width=300,
-            compound="left"
+            height=40,   # altura em pixels
+            width=200,   # largura em pixels
+            image=icone,
+            compound="left",
+            padx=10,
+            relief="flat",
+            anchor="w"   # alinha texto/ícone à esquerda dentro do botão
         )
-        if icone:
-            btn.config(image=icone)
-            btn.image = icone
+        btn.image = icone  # evitar garbage collection
         return btn
     
     botoes = [
@@ -65,10 +76,13 @@ def abrir_janela(): # Função para criação da janela principal do sistema
         bg="#4F4F4F",
         fg="white",
         font=("Segoe UI", 10, "bold"),
-        height=20,
-        width=300,
+        height=40,
+        width=200,
         compound="left",
-        image=icone_sair
+        image=icone_sair,
+        padx=10,
+        relief="flat",
+        anchor="w"
     )
     
     btn_sair.pack(pady=10)
