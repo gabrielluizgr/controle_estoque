@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import sqlite3
 from database import lista_dos_produtos
 
@@ -30,42 +30,110 @@ def listar_produtos(): # Criação de uma função para listar os produtos do ba
         if conexao:
             conexao.close() # Fecha a conexão    
 
-def listar_produtos_gui(janela_principal): # Criação de uma nova função que será chamada quando o usuário clicar no botão Listar Produtos
-    janela_listagem = tk.Toplevel() # Criação de uma nova janela filha (secundária). Usamos Toplevel() ao invés de Tk(), porque essa janela depende da principal (não é uma aplicação, é só uma nova tela)
-    janela_listagem.title("Lista de Produtos") # Define o título da janela
-    janela_listagem.geometry("920x500") # Define o tamanho da janela
+def listar_produtos_gui(janela_principal):  
+    janela_listagem = tk.Toplevel()
+    janela_listagem.title("Lista de Produtos")
+    janela_listagem.geometry("950x650")
     janela_listagem.configure(bg="#f0f0f0")
 
-    tk.Label(janela_listagem, text="Produtos Cadastrados", font=("Arial", 16), bg="#f0f0f0").pack(pady=(20, 10))
+    tk.Label(
+        janela_listagem,
+        text="Produtos Cadastrados",
+        font=("Arial", 16, "bold"),
+        bg="#f0f0f0"
+    ).pack(pady=(20, 10))
 
-    frame = tk.Frame(janela_listagem, bg="#f0f0f0") # Cria um frame, que é uma caixa contêiner dentro da janela. Serve como um espaço para agrupar elementos (como a lista e a barra de rolagem)
-    frame.pack(padx=20, fill=tk.BOTH, expand=True) # Coloca o frame na tela. "fill=tk.BOTH" sinaliza que ele vai ocupar o espaço tanto horizontal, quanto vertical. "expand=True" permite que o frame cresça junto com a janela, se ela for redimensionada
-    scrollbar = tk.Scrollbar(frame) # Cria uma barra de rolagem vertical dentro do frame. Isso é importante caso tenhamos muitos produtos para exibir.
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y) # Coloca a barra de rolagem na tela. "side=tk.RIGHT" sinaliza que ela aparecerá do lado direito da janela. "fill=tk.Y" faz com que ela se estique no eixo Y, ou seja, verticalmente
-    lista = tk.Listbox(frame, yscrollcommand=scrollbar.set, width=100, height=20, font=("Consolas", 10), bg="white", borderwidth=2, relief="groove") # Cria um componente Listbox, que é como uma caixa de listagem de itens. "yscrollcomand=scrollbar.set" conecta o scroll com a lista (para ele funcionar). "width=80" define a largura da lista (em caracteres, não pixels)
-    lista.pack(side=tk.LEFT, fill=tk.BOTH, expand=True) # Coloca a Listbox no lado esquerdo do frame e faz com que ele preencha todo o espaço disponível
-    lista.config(selectmode=tk.NONE)
-    lista.bind("<Button-1>", lambda e: "break")
-    scrollbar.config(command=lista.yview) # Conecta o comando da barra de rolagem à Listbox, para que ela saiba o que fazer quando o usuário rolar a barra (nesse caso, mover a visualização da lista)
+    # Frame de pesquisa
+    frame_pesquisa = tk.Frame(janela_listagem, bg="#f0f0f0")
+    frame_pesquisa.pack(fill=tk.X, padx=20, pady=(0,10))
 
-    # Chama a função separada do banco
-    sucesso, resultado = lista_dos_produtos()
-    if sucesso:
-        produtos = resultado
-        if produtos:
-            for id, nome, marca, descricao, quantidade, preco in produtos:
-                marca = marca.strip() if marca else "Sem marca"
-                descricao = descricao.strip() if descricao else "Sem descrição"
-                preco_formatado = f"{preco:.2f}".replace('.', ',')
-                texto = f"ID: {id} | Nome: {nome} | Marca: {marca or 'Sem marca'} | Descrição: {descricao} | Quantidade: {quantidade} | Preço: R$ {preco_formatado}"
-                lista.insert(tk.END, texto)
+    tk.Label(frame_pesquisa, text="Pesquisar:", bg="#f0f0f0", font=("Arial", 10)).pack(side=tk.LEFT, padx=5)
+    entrada_pesquisa = tk.Entry(frame_pesquisa, width=40)
+    entrada_pesquisa.pack(side=tk.LEFT, padx=5)
+
+    btn_pesquisar = tk.Button(
+        frame_pesquisa, text="Pesquisar",
+        command=lambda: carregar_dados(entrada_pesquisa.get().strip()),
+        bg="blue", fg="white",
+        font=("Segoe UI", 10, "bold"),
+        width=12
+    )
+    btn_pesquisar.pack(side=tk.LEFT, padx=5)
+
+    # Frame da tabela
+    frame = tk.Frame(janela_listagem, bg="#f0f0f0")
+    frame.pack(padx=20, pady=5, fill=tk.BOTH, expand=True)
+
+    colunas = ("ID", "Nome", "Marca", "Descrição", "Quantidade", "Preço")
+    tree = ttk.Treeview(frame, columns=colunas, show="headings", height=20)
+
+    for col in colunas:
+        tree.heading(col, text=col, command=lambda c=col: ordenar(tree, c, False))
+        tree.column(col, width=120, anchor=tk.CENTER)
+
+    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    def carregar_dados(filtro=""):
+        """Carrega produtos do banco, com filtro opcional"""
+        for item in tree.get_children():
+            tree.delete(item)
+
+        sucesso, resultado = lista_dos_produtos()
+        if sucesso:
+            produtos = resultado
+            if produtos:
+                for id, nome, marca, descricao, quantidade, preco in produtos:
+                    if filtro.lower() in nome.lower() or filtro.lower() in marca.lower():
+                        marca = marca.strip() if marca else "Sem marca"
+                        descricao = descricao.strip() if descricao else "Sem descrição"
+                        preco_formatado = f"R$ {preco:.2f}".replace('.', ',')
+                        tree.insert("", tk.END, values=(id, nome, marca, descricao, quantidade, preco_formatado))
+            else:
+                messagebox.showinfo("Info", "Nenhum produto cadastrado.")
         else:
-            lista.insert(tk.END, "Nenhum produto cadastrado.")
-    else:
-        messagebox.showerror("Erro", f"Erro ao acessar o banco: {resultado}")
-    
-    # Botão pra fechar janela
-    frame_botoes = tk.Frame(janela_listagem)
+            messagebox.showerror("Erro", f"Erro ao acessar o banco: {resultado}")
+
+    # Frame de botões inferior
+    frame_botoes = tk.Frame(janela_listagem, bg="#f0f0f0")
     frame_botoes.pack(pady=10)
-    btn_fechar = tk.Button(frame_botoes, text="Fechar", command=janela_listagem.destroy, bg="red", fg="white", font=("Segoe UI", 10, "bold"), width=10)
-    btn_fechar.pack()
+
+    btn_atualizar = tk.Button(
+        frame_botoes, text="Atualizar Página",
+        command=lambda: carregar_dados(),
+        bg="green", fg="white",
+        font=("Segoe UI", 10, "bold"),
+        width=15
+    )
+    btn_atualizar.pack(side=tk.LEFT, padx=10)
+
+    btn_fechar = tk.Button(
+        frame_botoes, text="Fechar",
+        command=janela_listagem.destroy,
+        bg="red", fg="white",
+        font=("Segoe UI", 10, "bold"),
+        width=12
+    )
+    btn_fechar.pack(side=tk.LEFT, padx=10)
+
+    # Carregar dados iniciais
+    carregar_dados()
+
+
+
+def ordenar(tree, coluna, reverso):
+    """Função para ordenar colunas ao clicar no cabeçalho"""
+    dados = [(tree.set(item, coluna), item) for item in tree.get_children("")]
+
+    try:
+        dados.sort(key=lambda x: float(x[0].replace("R$ ", "").replace(",", ".")), reverse=reverso)
+    except ValueError:
+        dados.sort(key=lambda x: x[0], reverse=reverso)
+
+    for index, (val, item) in enumerate(dados):
+        tree.move(item, "", index)
+
+    tree.heading(coluna, command=lambda: ordenar(tree, coluna, not reverso))
